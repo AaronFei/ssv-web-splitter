@@ -12,3 +12,4 @@ keyshares*.json
 deposit_data*.json
 *.keystore
 # (test.keystore.json is the PUBLIC SSV test key — intentionally kept)
+verify-gen*.mjs
