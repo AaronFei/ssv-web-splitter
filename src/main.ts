@@ -49,7 +49,7 @@ const I18N: Record<Lang, Record<string, string>> = {
     genSecValidators: '③ Validator 設定',
     genStartLabel: '起始 index',
     genCountLabel: '數量',
-    genAmountLabel: '每個金額 (ETH)',
+    genAmountLabel: '每個金額 ETH(0x02:32–2048,可小數)',
     genPwLabel: 'Keystore 密碼(至少 8 字)',
     genPwPh: '用來加密 keystore 的密碼',
     genGenBtn: '產生 keystore + deposit_data',
@@ -109,7 +109,7 @@ const I18N: Record<Lang, Record<string, string>> = {
     genSecValidators: '③ Validator settings',
     genStartLabel: 'Start index',
     genCountLabel: 'Count',
-    genAmountLabel: 'Amount each (ETH)',
+    genAmountLabel: 'Amount each (ETH; 0x02: 32–2048, decimals OK)',
     genPwLabel: 'Keystore password (min 8 chars)',
     genPwPh: 'password that encrypts the keystore',
     genGenBtn: 'Generate keystore + deposit_data',
@@ -268,6 +268,14 @@ $('gModeNew').addEventListener('click', () => setGenMode('new'));
 $('gModeImport').addEventListener('click', () => setGenMode('import'));
 setGenMode('new');
 
+// amount is only editable for 0x02 (compounding); 0x01 is fixed at 32 ETH
+$('gCompounding').addEventListener('change', () => {
+  const c = $('gCompounding').checked;
+  $('gAmount').disabled = !c;
+  if (!c) $('gAmount').value = '32';
+});
+$('gAmount').disabled = true;
+
 $('gGenMnemonic').addEventListener('click', () => {
   generatedMnemonic = generateMnemonic(wordlist, 256);
   $('gMnemonicShow').textContent = generatedMnemonic;
@@ -319,7 +327,13 @@ $('gGen').addEventListener('click', async () => {
     if (Number.isNaN(startIndex) || startIndex < 0) return glog(tx('❌ 起始 index 不正確。', '❌ Start index is invalid.'), true);
     if (Number.isNaN(count) || count < 1) return glog(tx('❌ 數量不正確。', '❌ Count is invalid.'), true);
     if (password.length < 8) return glog(tx('❌ keystore 密碼至少 8 字。', '❌ Keystore password must be at least 8 chars.'), true);
-    if (!compounding && amountEth !== 32) return glog(tx('❌ 0x01 每個必須是 32 ETH(複利型才能改金額)。', '❌ 0x01 must be 32 ETH each (only compounding can change the amount).'), true);
+    if (compounding) {
+      if (Number.isNaN(amountEth) || amountEth < 32 || amountEth > 2048) {
+        return glog(tx('❌ 0x02 每個金額需介於 32–2048 ETH。', '❌ 0x02 amount must be between 32 and 2048 ETH each.'), true);
+      }
+    } else if (amountEth !== 32) {
+      return glog(tx('❌ 0x01 固定每個 32 ETH(要超過請勾「0x02 複利型」)。', '❌ 0x01 is fixed at 32 ETH each (check "0x02 compounding" to deposit more).'), true);
+    }
     const amountGwei = Math.round(amountEth * 1e9);
 
     $('gGen').disabled = true;
