@@ -2,6 +2,8 @@
 
 **Live:** https://aaronfei.github.io/eth-validator-ssv-toolkit/ (8 languages — English · 繁體中文 · 简体中文 · 日本語 · 한국어 · Русский · Deutsch · Español — selector top-right)
 
+**🔍 Independently security-reviewed by [Claude (Anthropic)](audits/2026-06-13-claude-adversarial.md) + [Grok (xAI)](audits/2026-06-13-grok-review.md)** — two AI audits from different vendors, both *safe-with-caveats*. 由兩家不同廠商的 AI 獨立安全審查。
+
 A fully **client-side** toolkit for Ethereum validator keys, in three tabs:
 **① Generate** (BIP-39 mnemonic → EIP-2335 keystores + `deposit_data`),
 **② Top-up** (add ETH to an existing 0x02 validator → `deposit_data` only), and
@@ -112,8 +114,8 @@ Trust shouldn't rest on a single reviewer — including the author. Security rev
 (`pnpm test` · `pnpm verify:cli` · reproducible build · DevTools Network). See
 [audits/README.md](audits/README.md) for how to add one. Full credits: [CONTRIBUTORS.md](CONTRIBUTORS.md).
 
-- **Claude (Anthropic)** — adversarial multi-agent security review + implementation → [review](audits/2026-06-13-claude-adversarial.md)
-- **Grok (xAI)** — security review via `grok build` (core crypto, SSV split, shims, CSP, build reproducibility, dependency audit, offline guarantees) → [review](audits/2026-06-13-grok-review.md)
+- 🔍 **Claude (Anthropic)** — adversarial multi-agent security review + implementation → [review](audits/2026-06-13-claude-adversarial.md) · verdict **safe-with-caveats**
+- 🔍 **Grok (xAI)** — security review via `grok build` (core crypto, SSV split, shims, CSP, build reproducibility, dependency audit, offline guarantees) → [review](audits/2026-06-13-grok-review.md) · verdict **safe-with-caveats**
 
 信任不應依賴單一審查者(包括作者本人)。不同廠商的 AI 與人類所做的安全審查都記錄在
 [`audits/`](audits/),每份皆**釘選到特定 commit**且可獨立重現。貢獻者: **Claude(Anthropic)** [📄](audits/2026-06-13-claude-adversarial.md)、**Grok(xAI)** [📄](audits/2026-06-13-grok-review.md)（已完成獨立安全審查並新增至 audits/）。
