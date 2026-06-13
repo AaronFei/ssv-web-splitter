@@ -3,7 +3,7 @@
 // Tab ② Split: keystore -> SSV keyshares.
 // Secrets never leave the tab; only a non-secret UI lang preference is stored.
 import { SSVKeys, KeyShares, KeySharesItem } from '@ssv-labs/ssv-sdk';
-import { generateValidators, NETWORKS } from './generate';
+import { generateValidators, NETWORKS, detectNextIndex } from './generate';
 import { generateMnemonic, validateMnemonic } from '@scure/bip39';
 import { wordlist } from '@scure/bip39/wordlists/english.js';
 
@@ -31,7 +31,7 @@ const I18N: Record<Lang, Record<string, string>> = {
     genWarn:
       '<b>產生真實金鑰前請先「斷網」。</b>助記詞與私鑰只在本分頁記憶體處理,不上傳、不寫入瀏覽器儲存。' +
       '產生引擎已與官方 deposit-cli 交叉驗證(pubkey/簽名/deposit_data_root 完全一致)。' +
-      '<b>放錢請用官方 launchpad</b>(它會在你存錢前驗證 deposit_data)。',
+      '<b>放錢請用官方 launchpad</b>(它會在你存錢前驗證 deposit_data)。本頁產生<b>全程不需連網</b>;每個 validator 都會自動驗證(BLS 簽名 sign→verify + keystore 可解回)。',
     genSecNetwork: '網路',
     genSecMnemonic: '① 助記詞',
     genModeNew: '產生新助記詞',
@@ -53,23 +53,25 @@ const I18N: Record<Lang, Record<string, string>> = {
     genPwLabel: 'Keystore 密碼(至少 8 字)',
     genPwPh: '用來加密 keystore 的密碼',
     genGenBtn: '產生 keystore + deposit_data',
+    genDetectBtn: '🌐 偵測下一個可用 index(需連網)',
+    gridHint: '可把整串助記詞貼到第 1 格,會自動分配到 24 格;輸入前幾個字母會自動補完整個字。',
     genNext: '',
     // --- split ---
     bannerWarn:
       '<b>私鑰只在這個瀏覽器分頁的記憶體裡處理,不上傳、不寫入瀏覽器儲存。</b><br />' +
-      '<b>切割真實 keystore 前,建議先「斷網」。</b>產生的 <code>keyshares.json</code> 已對 operator 加密,上傳官方 app 安全。',
+      '<b>切割真實 keystore 前,建議先「斷網」。</b>產生的 <code>keyshares.json</code> 已對 operator 加密,上傳官方 app 安全。<br />🌐 標記的按鈕(抓公鑰、連錢包)需連網、只讀公開資料;keystore 切割本身完全離線。',
     secCmd: '⓪ 一鍵帶入(貼上 app.ssv.network 產生的指令)',
     cmdLabel: '把官方 app 給的 <code>ssv-keys ...</code> 指令整段貼進來,自動填好下面欄位。',
     parseCmdBtn: '⤵ 解析並帶入',
     cmdHint: '這段指令只含公開資料(operator 公鑰、owner 地址、nonce),沒有私鑰。',
     secOps: '① Operators(至少 4 個)',
     opIdsLabel: 'Operator IDs(逗號分隔)',
-    fetchKeysBtn: '↻ 從 SSV API 抓這些 ID 的公鑰',
+    fetchKeysBtn: '🌐 從 SSV API 抓公鑰(需連網)',
     opKeysLabel: 'Operator public keys(base64,逗號分隔,順序對齊 IDs)',
     opKeysHint: '抓公鑰是讀公開資料,不涉及私鑰。想完全離線可自己貼上。',
     secOwner: '② Owner(管理/付費錢包,不是收錢的冷錢包)',
     ownerLabel: 'Owner address',
-    connectBtn: '🔗 連接錢包',
+    connectBtn: '🌐 連接錢包(需連網)',
     nonceLabel: 'Owner nonce',
     ownerHint: 'nonce 在 <a href="https://app.ssv.network" target="_blank" rel="noreferrer">app.ssv.network</a> 連錢包後可看到;全新 owner 為 0。多個 keystore 自動 nonce+1。',
     secKeystore: '③ Keystore(私鑰,留在本機)',
@@ -111,22 +113,24 @@ const I18N: Record<Lang, Record<string, string>> = {
     genPwLabel: 'Keystore password (min 8 chars)',
     genPwPh: 'password that encrypts the keystore',
     genGenBtn: 'Generate keystore + deposit_data',
+    genDetectBtn: '🌐 Detect next free index (needs network)',
+    gridHint: 'Paste the whole mnemonic into box 1 — it fills all 24; typing the first letters auto-completes each word.',
     genNext: '',
     bannerWarn:
       "<b>Your private key is processed only in this browser tab — never uploaded, never stored.</b><br />" +
-      '<b>Disconnect from the network before splitting a real keystore.</b> The resulting <code>keyshares.json</code> is operator-encrypted, so uploading it to the official app is safe.',
+      '<b>Disconnect from the network before splitting a real keystore.</b> The resulting <code>keyshares.json</code> is operator-encrypted, so uploading it to the official app is safe.<br />Buttons marked 🌐 (fetch keys, connect wallet) need network for public data; the split itself is fully offline.',
     secCmd: '⓪ Quick fill (paste the command from app.ssv.network)',
     cmdLabel: 'Paste the whole <code>ssv-keys ...</code> command from the official app to auto-fill the fields below.',
     parseCmdBtn: '⤵ Parse & fill',
     cmdHint: 'This command holds only public data (operator public keys, owner address, nonce) — no private key.',
     secOps: '① Operators (at least 4)',
     opIdsLabel: 'Operator IDs (comma-separated)',
-    fetchKeysBtn: "↻ Fetch these IDs' public keys from the SSV API",
+    fetchKeysBtn: '🌐 Fetch operator public keys from SSV API (needs network)',
     opKeysLabel: 'Operator public keys (base64, comma-separated, same order as IDs)',
     opKeysHint: 'Fetching public keys reads public data only. To stay fully offline, paste them yourself.',
     secOwner: '② Owner (managing / paying wallet, NOT your cold receiving wallet)',
     ownerLabel: 'Owner address',
-    connectBtn: '🔗 Connect wallet',
+    connectBtn: '🌐 Connect wallet (needs network)',
     nonceLabel: 'Owner nonce',
     ownerHint: 'See the nonce on <a href="https://app.ssv.network" target="_blank" rel="noreferrer">app.ssv.network</a> after connecting; a new owner is 0. Multiple keystores auto-increment by 1.',
     secKeystore: '③ Keystore (private key — stays local)',
@@ -197,6 +201,59 @@ function clearDownloads(container: HTMLElement) {
   container.innerHTML = '';
 }
 
+// ---------------- mnemonic word grid (24 cells, BIP-39 autocomplete) ----------------
+function buildMnemonicGrid(container: HTMLElement) {
+  container.innerHTML = '';
+  const inputs: HTMLInputElement[] = [];
+  for (let i = 0; i < 24; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'wcell';
+    const num = document.createElement('span');
+    num.textContent = String(i + 1);
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.autocomplete = 'off';
+    inp.spellcheck = false;
+    inp.setAttribute('data-lpignore', 'true');
+    inp.setAttribute('data-1p-ignore', '');
+    cell.append(num, inp);
+    container.appendChild(cell);
+    inputs.push(inp);
+  }
+  const fill = (from: number, words: string[]) => {
+    for (let k = 0; k < words.length && from + k < 24; k++) inputs[from + k].value = words[k];
+  };
+  inputs.forEach((inp, idx) => {
+    inp.addEventListener('input', () => {
+      const v = inp.value.toLowerCase().trim();
+      if (/\s/.test(v)) {
+        // a full/multi-word paste → distribute across cells from here
+        const words = v.split(/\s+/).filter(Boolean);
+        fill(idx, words);
+        inputs[Math.min(idx + words.length, 23)].focus();
+        return;
+      }
+      inp.value = v;
+      if (v.length >= 2) {
+        const matches = wordlist.filter((w) => w.startsWith(v));
+        if (matches.length === 1 && matches[0] !== v) {
+          inp.value = matches[0]; // unique prefix → autocomplete the word
+          if (idx < 23) inputs[idx + 1].focus();
+        }
+      }
+    });
+    inp.addEventListener('keydown', (e: KeyboardEvent) => {
+      if ((e.key === ' ' || e.key === 'Enter') && idx < 23) { e.preventDefault(); inputs[idx + 1].focus(); }
+    });
+  });
+  return {
+    getMnemonic: () => inputs.map((i) => i.value.trim()).filter(Boolean).join(' '),
+    clear: () => inputs.forEach((i) => (i.value = '')),
+  };
+}
+const confirmGrid = buildMnemonicGrid($('gConfirmGrid'));
+const importGrid = buildMnemonicGrid($('gImportGrid'));
+
 // ================= GENERATE =================
 let genMode: 'new' | 'import' = 'new';
 let generatedMnemonic = '';
@@ -214,7 +271,27 @@ setGenMode('new');
 $('gGenMnemonic').addEventListener('click', () => {
   generatedMnemonic = generateMnemonic(wordlist, 256);
   $('gMnemonicShow').textContent = generatedMnemonic;
-  glog(tx('已產生助記詞 —— 請離線抄寫,並在下方再輸入一次確認。', 'Mnemonic generated — write it down offline, then re-enter it below to confirm.'), true);
+  glog(tx('已產生助記詞 —— 請離線抄寫,並在下方 24 格再輸入一次確認。', 'Mnemonic generated — write it down offline, then re-enter it in the 24 boxes below to confirm.'), true);
+});
+
+$('gDetectIdx').addEventListener('click', async () => {
+  const mnemonic = genMode === 'new' ? (confirmGrid.getMnemonic() || generatedMnemonic) : importGrid.getMnemonic();
+  if (!validateMnemonic(mnemonic, wordlist)) {
+    return glog(tx('❌ 先輸入有效助記詞才能偵測 index。', '❌ Enter a valid mnemonic first to detect the index.'), true);
+  }
+  const net = NETWORKS[$('gNetwork').value];
+  if (!net.beacon) return glog(tx(`❌ ${net.label} 不支援自動偵測,請手動填。`, `❌ Auto-detect not available for ${net.label}; enter manually.`), true);
+  $('gDetectIdx').disabled = true;
+  glog(tx('🌐 偵測下一個可用 index(查鏈、只送公鑰)...', '🌐 Detecting next free index (queries chain, sends only pubkeys)...'), true);
+  try {
+    const next = await detectNextIndex(mnemonic, net.beacon);
+    $('gStart').value = String(next);
+    glog(tx(`✅ 下一個可用 index = ${next}(已填入起始 index)`, `✅ Next free index = ${next} (filled into Start index)`));
+  } catch (e: any) {
+    glog(tx(`❌ 偵測失敗: ${e.message}。可手動填。`, `❌ Detect failed: ${e.message}. Enter manually.`));
+  } finally {
+    $('gDetectIdx').disabled = false;
+  }
 });
 
 $('gGen').addEventListener('click', async () => {
@@ -223,11 +300,11 @@ $('gGen').addEventListener('click', async () => {
     let mnemonic = '';
     if (genMode === 'new') {
       if (!generatedMnemonic) return glog(tx('❌ 請先按「產生 24 字助記詞」。', '❌ Click "Generate 24-word mnemonic" first.'), true);
-      const confirm = ($('gMnemonicConfirm').value || '').trim().replace(/\s+/g, ' ');
+      const confirm = confirmGrid.getMnemonic();
       if (confirm !== generatedMnemonic) return glog(tx('❌ 確認用的助記詞跟產生的不一致。', '❌ The confirmation mnemonic does not match.'), true);
       mnemonic = generatedMnemonic;
     } else {
-      mnemonic = ($('gImport').value || '').trim().replace(/\s+/g, ' ');
+      mnemonic = importGrid.getMnemonic();
       if (!validateMnemonic(mnemonic, wordlist)) return glog(tx('❌ 助記詞無效(檢查字數/拼字)。', '❌ Invalid mnemonic (check word count/spelling).'), true);
     }
     const withdraw = ($('gWithdraw').value || '').trim();
@@ -257,8 +334,8 @@ $('gGen').addEventListener('click', async () => {
     addDownload(dl, `deposit_data-${Date.now()}.json`, JSON.stringify(res.depositData));
 
     glog(tx(
-      `✅ 完成 ${count} 個(已自我驗證簽名)。點下方按鈕下載每個 keystore 與 deposit_data.json。`,
-      `✅ Done (${count}, signatures self-verified). Click below to download each keystore and deposit_data.json.`));
+      `✅ 完成 ${count} 個 —— 每個已驗證:BLS 簽名(sign→verify)+ keystore 可解回原金鑰。點下方下載 keystore 與 deposit_data.json。`,
+      `✅ Done (${count}) — each verified: BLS signature (sign→verify) + keystore decrypts back to the key. Click below to download keystores + deposit_data.json.`));
 
     const lp = NETWORKS[network].launchpad;
     $('gNext').classList.remove('hidden');

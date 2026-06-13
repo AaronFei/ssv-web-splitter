@@ -55,10 +55,15 @@
         color: #fff !important; padding: 10px 16px; border-radius: 8px;
         text-decoration: none; font-weight: 600; font-size: 14px; }
       .hidden { display: none; }
+      .wordgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px; margin-top: 6px; }
+      .wcell { display: flex; align-items: center; background: #0f1b30; border: 1px solid #243a5c; border-radius: 6px; padding: 2px 6px; }
+      .wcell span { color: #5d76a0; font-size: 11px; width: 20px; text-align: right; margin-right: 6px; flex: 0 0 auto; }
+      .wcell input { border: 0; background: transparent; padding: 5px 0; font-size: 12px; width: 100%; color: #e6edf6; font-family: ui-monospace, monospace; }
+      .wcell input:focus { outline: none; }
       .chk { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 13px; color: #cdddf0; }
       .chk input { width: auto; margin-top: 3px; }
     </style>
-    <script type="module" crossorigin src="./assets/index-DBiZKv3C.js"></script>
+    <script type="module" crossorigin src="./assets/index-D0TUULVK.js"></script>
   </head>
   <body>
     <div class="hdr">
@@ -93,12 +98,13 @@
         <label data-i18n="genNewShow"></label>
         <div id="gMnemonicShow" class="mono-box"></div>
         <label data-i18n="genConfirmLabel"></label>
-        <textarea id="gMnemonicConfirm" autocomplete="off" spellcheck="false" data-i18n-ph="genConfirmPh"></textarea>
+        <div id="gConfirmGrid" class="wordgrid"></div>
       </div>
 
       <div id="gImportBox" class="hidden">
         <label data-i18n="genImportLabel"></label>
-        <textarea id="gImport" autocomplete="off" spellcheck="false" data-i18n-ph="genImportPh"></textarea>
+        <div id="gImportGrid" class="wordgrid"></div>
+        <div class="hint" data-i18n="gridHint"></div>
       </div>
 
       <h2 data-i18n="genSecWithdraw"></h2>
@@ -114,6 +120,7 @@
         <div><label data-i18n="genCountLabel"></label><input id="gCount" type="text" value="1" /></div>
         <div><label data-i18n="genAmountLabel"></label><input id="gAmount" type="text" value="32" /></div>
       </div>
+      <button class="secondary" id="gDetectIdx" type="button" data-i18n="genDetectBtn"></button>
       <label data-i18n="genPwLabel"></label>
       <input id="gPw" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
         data-1p-ignore data-lpignore="true" data-i18n-ph="genPwPh" placeholder="" />

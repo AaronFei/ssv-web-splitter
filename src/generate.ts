@@ -15,10 +15,10 @@ async function initBls() {
 }
 
 // GENESIS_FORK_VERSION per network (the deposit domain uses this, not the current fork).
-export const NETWORKS: Record<string, { label: string; forkVersion: string; launchpad: string }> = {
-  mainnet: { label: 'Mainnet', forkVersion: '00000000', launchpad: 'https://launchpad.ethereum.org' },
-  hoodi: { label: 'Hoodi (testnet)', forkVersion: '10000910', launchpad: 'https://hoodi.launchpad.ethereum.org' },
-  holesky: { label: 'Holesky (testnet)', forkVersion: '01017000', launchpad: 'https://holesky.launchpad.ethereum.org' },
+export const NETWORKS: Record<string, { label: string; forkVersion: string; launchpad: string; beacon?: string }> = {
+  mainnet: { label: 'Mainnet', forkVersion: '00000000', launchpad: 'https://launchpad.ethereum.org', beacon: 'https://ethereum-beacon-api.publicnode.com' },
+  hoodi: { label: 'Hoodi (testnet)', forkVersion: '10000910', launchpad: 'https://hoodi.launchpad.ethereum.org', beacon: 'https://ethereum-hoodi-beacon-api.publicnode.com' },
+  holesky: { label: 'Holesky (testnet)', forkVersion: '01017000', launchpad: 'https://holesky.launchpad.ethereum.org', beacon: 'https://ethereum-holesky-beacon-api.publicnode.com' },
 };
 
 const DOMAIN_DEPOSIT = Uint8Array.from([3, 0, 0, 0]);
@@ -115,4 +115,33 @@ export async function generateValidators(input: GenInput): Promise<GenResult> {
   }
 
   return { keystores, depositData };
+}
+
+// Derive validator pubkeys (public data) for a range of indices.
+export async function derivePubkeys(mnemonic: string, start: number, count: number): Promise<string[]> {
+  await initBls();
+  const master = deriveKeyFromMnemonic(mnemonic);
+  const out: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const { signing } = deriveEth2ValidatorKeys(master, start + i);
+    out.push('0x' + bytesToHex(bls.SecretKey.fromBytes(signing).toPublicKey().toBytes()));
+  }
+  return out;
+}
+
+// Find the first derivation index whose validator is NOT yet on-chain.
+// Derives pubkeys locally; sends only the PUBLIC keys to the beacon API.
+export async function detectNextIndex(mnemonic: string, beaconBase: string, max = 256): Promise<number> {
+  const WIN = 32;
+  for (let start = 0; start < max; start += WIN) {
+    const pks = await derivePubkeys(mnemonic, start, WIN);
+    const r = await fetch(`${beaconBase}/eth/v1/beacon/states/head/validators?${pks.map((p) => `id=${p}`).join('&')}`);
+    if (!r.ok) throw new Error(`beacon HTTP ${r.status}`);
+    const j = await r.json();
+    const found = new Set((j.data || []).map((v: any) => (v.validator?.pubkey || v.pubkey || '').toLowerCase()));
+    for (let k = 0; k < WIN; k++) {
+      if (!found.has(pks[k].toLowerCase())) return start + k;
+    }
+  }
+  return max;
 }
