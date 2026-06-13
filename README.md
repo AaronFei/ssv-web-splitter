@@ -104,6 +104,20 @@ The generated `deposit_data` was confirmed **byte-identical** to ethstaker-depos
 4. **Watch DevTools → Network:** Generate/Top-up/Split issue **no** requests; the only requests ever come from the three 🌐 buttons. 在 DevTools 確認核心操作零請求。
 5. **Deposit via the official launchpad**, which re-validates `deposit_data` (fork/network/signature) before any ETH moves. 透過官方 launchpad 入金,它會再次驗證。
 
+## Independent reviews & contributors / 獨立審查與貢獻者
+
+Trust shouldn't rest on a single reviewer — including the author. Security reviews
+(by AI agents from different vendors, and by humans) are recorded under
+[`audits/`](audits/), each **pinned to a commit** and independently reproducible
+(`pnpm test` · `pnpm verify:cli` · reproducible build · DevTools Network). See
+[audits/README.md](audits/README.md) for how to add one.
+
+- **Claude (Anthropic)** — adversarial multi-agent security review + implementation → [review](audits/2026-06-13-claude-adversarial.md)
+- **Grok (xAI)** — review via `grok build` *(pending — add per [TEMPLATE](audits/TEMPLATE.md))*
+
+信任不應依賴單一審查者(包括作者本人)。不同廠商的 AI 與人類所做的安全審查都記錄在
+[`audits/`](audits/),每份皆**釘選到特定 commit**且可獨立重現。貢獻者:**Claude(Anthropic)**、**Grok(xAI)**。
+
 ## License / 授權
 
 Released under the **[MIT License](LICENSE)** — free to use, fork, modify, and self-host; keep the copyright notice. Provided **"AS IS", without warranty of any kind**: this tool handles real private keys and funds — verify everything yourself and use at your own risk. Nothing here is financial advice.
