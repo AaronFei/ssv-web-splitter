@@ -44,8 +44,8 @@ const I18N: Record<Lang, Record<string, string>> = {
   zh: {
     title: '🔐 ETH Validator + SSV 工具箱(本機)',
     langBtn: 'EN',
-    tabGenerate: '① 產生金鑰',
-    tabSplit: '② 切割 KeyShares',
+    tabGenerate: '產生 Validator 金鑰',
+    tabSplit: '切割 SSV KeyShares',
     // --- generate ---
     genWarn:
       '<b>產生真實金鑰前請先「斷網」。</b>助記詞與私鑰只在本分頁記憶體處理,不上傳、不寫入瀏覽器儲存。' +
@@ -101,7 +101,7 @@ const I18N: Record<Lang, Record<string, string>> = {
     okBanner:
       '<b>切完接下來:</b> 把 <code>keyshares.json</code> 上傳到 app.ssv.network 註冊。' +
       '⚠️ 同一個 validator 仍在別處運作時請勿註冊 —— 先停掉、等連續 2 次漏勤,確認後再註冊,以免雙簽被罰。',
-    tabTopup: '③ 加碼 Top-up',
+    tabTopup: '加碼 ETH (Top-up)',
     topWarn:
       '<b>幫既有 0x02 validator 加碼。</b>本頁只產生 top-up 的 <code>deposit_data.json</code>(不需密碼、不出 keystore)。' +
       '鏈上 top-up 只認 pubkey,簽名與提款憑證不會被重新檢查;<b>產生前建議斷網</b>。送出用 ethdo / launchpad / 直接對存款合約。',
@@ -118,8 +118,8 @@ const I18N: Record<Lang, Record<string, string>> = {
   en: {
     title: '🔐 ETH Validator + SSV Toolkit (local)',
     langBtn: '中文',
-    tabGenerate: '① Generate keys',
-    tabSplit: '② Split KeyShares',
+    tabGenerate: 'Generate validator keys',
+    tabSplit: 'Split SSV KeyShares',
     genWarn:
       '<b>Disconnect from the network before generating real keys.</b> The mnemonic and private keys are processed only in this tab — never uploaded, never stored. ' +
       'The generator is cross-verified against the official deposit-cli (identical pubkey / signature / deposit_data_root). ' +
@@ -173,7 +173,7 @@ const I18N: Record<Lang, Record<string, string>> = {
     okBanner:
       "<b>Next:</b> upload <code>keyshares.json</code> to app.ssv.network to register. " +
       "⚠️ Don't register while the same validator runs elsewhere — stop it, wait for 2 consecutive missed attestations, then register, to avoid double-signing.",
-    tabTopup: '③ Top-up',
+    tabTopup: 'Top-up ETH',
     topWarn:
       '<b>Add ETH to an existing 0x02 validator.</b> This page only produces a top-up <code>deposit_data.json</code> (no password, no keystore). ' +
       'On-chain a top-up only matches by pubkey; its signature & withdrawal credentials are not re-checked. <b>Disconnect before generating.</b> Submit via ethdo / launchpad / the deposit contract.',
