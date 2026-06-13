@@ -16,6 +16,9 @@
         max-width: 860px; margin-inline: auto; line-height: 1.5;
       }
       .hdr { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .links { display: flex; flex-wrap: wrap; gap: 10px; margin: 2px 0 4px; font-size: 13px; }
+      .links a { background: #11203a; border: 1px solid #243a5c; border-radius: 6px; padding: 5px 11px; text-decoration: none; color: #9fc2ff; }
+      .links a:hover { background: #16284a; }
       h1 { font-size: 19px; margin: 0 0 4px; }
       h2 { font-size: 15px; margin: 22px 0 8px; color: #9fb4d0; text-transform: uppercase; letter-spacing: .04em; }
       .banner { border-radius: 10px; padding: 14px 16px; margin: 12px 0 8px; font-size: 14px; }
@@ -72,6 +75,11 @@
     <div class="hdr">
       <h1 data-i18n="title"></h1>
       <button id="langBtn" class="langbtn" type="button"></button>
+    </div>
+
+    <div class="links">
+      <a href="https://launchpad.ethereum.org" target="_blank" rel="noreferrer noopener">🚀 Ethereum Launchpad ↗</a>
+      <a href="https://app.ssv.network" target="_blank" rel="noreferrer noopener">🟦 app.ssv.network ↗</a>
     </div>
 
     <div class="tabs">
