@@ -1,9 +1,9 @@
 {
-  "name": "ssv-web-splitter",
+  "name": "eth-validator-ssv-toolkit",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Local, client-side SSV keyshare splitter. Keystore + private key never leave the browser tab. Serve on 127.0.0.1 only.",
+  "description": "Client-side ETH validator toolkit: generate validator keys (keystores + deposit_data) and split into SSV keyshares — all in-browser, keys never leave the tab.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -11,7 +11,12 @@
     "start": "vite build && vite preview"
   },
   "dependencies": {
+    "@chainsafe/bls": "^8.2.0",
+    "@chainsafe/bls-keygen": "^0.4.0",
+    "@chainsafe/bls-keystore": "^3.1.0",
+    "@lodestar/types": "^1.43.0",
     "@noble/ciphers": "^2.2.0",
+    "@scure/bip39": "^2.2.0",
     "@ssv-labs/ssv-sdk": "0.1.0"
   },
   "devDependencies": {

@@ -1,12 +1,13 @@
-# SSV KeyShare Splitter (client-side)
+# ETH Validator + SSV Toolkit (client-side)
 
-**Live:** https://aaronfei.github.io/ssv-web-splitter/ (中文 / English toggle, top-right)
+**Live:** https://aaronfei.github.io/eth-validator-ssv-toolkit/ (中文 / English toggle, top-right)
 
-A fully **client-side** tool to split an Ethereum validator keystore into SSV
-KeyShares. The keystore and the decrypted private key are processed **in the
-browser tab only** — nothing is uploaded, nothing is written to
-`localStorage`/`IndexedDB`. Only the (already operator-encrypted)
-`keyshares.json` is offered as a download.
+A fully **client-side** toolkit for Ethereum validator keys. Today it splits a
+validator keystore into SSV KeyShares; validator key generation
+(mnemonic → keystores → deposit_data) is being added — see `ROADMAP.md`. The
+keystore and the decrypted private key are processed **in the browser tab
+only** — nothing is uploaded, nothing is written to `localStorage`/`IndexedDB`.
+Only the (already operator-encrypted) `keyshares.json` is offered as a download.
 
 It uses the official [`@ssv-labs/ssv-sdk`](https://www.npmjs.com/package/@ssv-labs/ssv-sdk)
 for the actual cryptography (same as app.ssv.network).
