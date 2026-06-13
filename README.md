@@ -110,7 +110,7 @@ Trust shouldn't rest on a single reviewer — including the author. Security rev
 (by AI agents from different vendors, and by humans) are recorded under
 [`audits/`](audits/), each **pinned to a commit** and independently reproducible
 (`pnpm test` · `pnpm verify:cli` · reproducible build · DevTools Network). See
-[audits/README.md](audits/README.md) for how to add one.
+[audits/README.md](audits/README.md) for how to add one. Full credits: [CONTRIBUTORS.md](CONTRIBUTORS.md).
 
 - **Claude (Anthropic)** — adversarial multi-agent security review + implementation → [review](audits/2026-06-13-claude-adversarial.md)
 - **Grok (xAI)** — security review via `grok build` (core crypto, SSV split, shims, CSP, build reproducibility, dependency audit, offline guarantees) → [review](audits/2026-06-13-grok-review.md)
