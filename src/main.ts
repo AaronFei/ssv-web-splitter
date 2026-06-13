@@ -52,7 +52,7 @@ const I18N: Record<Lang, Record<string, string>> = {
       '<b>切完接下來:</b> 把 <code>keyshares.json</code> 上傳到 app.ssv.network 註冊。' +
       '⚠️ 同一個 validator 仍在別處運作時請勿註冊 —— 先停掉它、在 beaconcha.in 等連續 2 次漏勤,確認已停止後再註冊,以免雙簽被罰。',
     langBtn: 'EN',
-    ready: '準備就緒。建議:① 抓/貼 operator 公鑰 → ② 連錢包或填 owner → ③ 選 keystore + 密碼 → 產生。',
+    ready: '',
   },
   en: {
     title: '🔐 SSV KeyShare Splitter — local / offline',
@@ -86,7 +86,7 @@ const I18N: Record<Lang, Record<string, string>> = {
       '<b>Next, after splitting:</b> upload <code>keyshares.json</code> to app.ssv.network to register. ' +
       "⚠️ Don't register while the same validator is still running elsewhere — stop it first and wait for 2 consecutive missed attestations on beaconcha.in before registering, to avoid double-signing / slashing.",
     langBtn: '中文',
-    ready: 'Ready. Suggested flow: ① fetch/paste operator keys → ② connect wallet or fill owner → ③ choose keystore + password → Generate.',
+    ready: '',
   },
 };
 
